@@ -1,0 +1,35 @@
+name: Docker Image CI - X86_64/AARCH64 for Alpine/Alpaquita Linux with golang
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # run it manually
+  workflow_dispatch:   
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+        dockeros: [alpine]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build -f Dockerfile-${{ matrix.dockeros }} --tag buildergo .
+
+    - name: build static program with alpine/alpaquita linux docker with golang
+      run: |
+        docker run --cidfile=buildergo.cid buildergo true
+        docker cp "$(cat buildergo.cid):work/artifact/." .
+
+    - name: Upload static program
+      uses: actions/upload-artifact@v4
+      with:
+        name: crowdsec-${{ matrix.dockeros }}-${{ matrix.os }}
+        path: ./*.tar.xz
