@@ -1,0 +1,14 @@
+FROM bellsoft/alpaquita-linux-go:musl
+
+RUN apk update
+RUN apk upgrade
+
+# required CGO compile
+RUN apk add --no-cache \
+  curl git gcc make linux-headers \
+  musl-dev bash patch pkgconfig xz
+
+ENV XZ_OPT=-e9
+COPY build-static-golang.sh build-static-golang.sh
+RUN chmod +x ./build-static-golang.sh
+RUN bash ./build-static-golang.sh
