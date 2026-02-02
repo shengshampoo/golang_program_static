@@ -39,7 +39,7 @@ else
 exit 1
 fi
 
-cp local/graftcp-local .
-tar vcJf ./graftcp.tar.xz graftcp graftcp-local
+cd ../
+tar vcJf ./graftcp.tar.xz graftcp local/graftcp-local
 cp ./graftcp.tar.xz /work/artifact
 
