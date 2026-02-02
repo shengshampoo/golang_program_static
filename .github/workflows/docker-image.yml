@@ -32,4 +32,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: golang-${{ matrix.dockeros }}-${{ matrix.os }}
-        path: ./golang.tar.xz
+        path: ./*.tar.xz
