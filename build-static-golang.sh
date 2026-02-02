@@ -29,7 +29,7 @@ cd graftcp
 sed -i '/$(CROSS_COMPILE)/s/^/#&/' ./Makefile
 sed -i '22i#define uint unsigned int' ./cidr-trie.c
 sed -i '23i#define u_char unsigned char' ./cidr-trie.c
-make graftcp
+CFLAGS="$CFLAGS -static" LDFLAGS="-static --static -no-pie -s" make graftcp
 cd local
 if [ "$(uname -m)" == "x86_64" ]; then
 GOAMD64=v3 GOOS=$(uname -o | sed -e s@^.*/@@ | tr '[:upper:]' '[:lower:]') GOARCH=amd64 CGO_ENABLED=1 go build -pgo=auto -a -tags netgo -ldflags '-s -w -extldflags "-static"' ./cmd/graftcp-local
