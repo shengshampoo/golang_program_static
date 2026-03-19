@@ -1,4 +1,4 @@
-FROM bellsoft/alpaquita-linux-go:musl
+FROM bellsoft/alpaquita-linux-go:1.26-musl
 
 RUN apk update
 RUN apk upgrade
