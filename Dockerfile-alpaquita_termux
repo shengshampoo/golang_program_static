@@ -1,0 +1,14 @@
+FROM bellsoft/alpaquita-linux-go:1.26-musl
+
+RUN apk update
+RUN apk upgrade
+
+# required CGO compile
+RUN apk add --no-cache \
+  curl git gcc make linux-headers \
+  musl-dev bash patch pkgconfig xz unzip
+
+ENV XZ_OPT=-e9
+COPY build-termux-golang.sh build-termux-golang.sh
+RUN chmod +x ./build-termux-golang.sh
+RUN bash ./build-termux-golang.sh
