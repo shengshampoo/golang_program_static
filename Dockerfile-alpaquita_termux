@@ -6,7 +6,7 @@ RUN apk upgrade
 # required CGO compile
 RUN apk add --no-cache \
   curl git gcc make linux-headers \
-  musl-dev bash patch pkgconfig xz unzip
+  bash patch pkgconfig xz unzip
 
 ENV XZ_OPT=-e9
 COPY build-termux-golang.sh build-termux-golang.sh
