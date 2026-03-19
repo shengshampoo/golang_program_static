@@ -14,11 +14,11 @@ export CC="/android-ndk-r29/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-li
 cd $WORKSPACE
 git clone https://github.com/tsosunchia/iNetSpeed-CLI
 cd iNetSpeed-CLI
-VERSION="${VERSION:-$(git describe --tags --always 2>/dev/null || echo "dev")}" \
-COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")"  \
-DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-LDFLAGS="-s -w  -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.date=${DATE}" \
-CGO_ENABLED=1 GOOS=android GOARCH=arm64 go build -pgo=auto -a -ldflags "${LDFLAGS} -w -s" -o ./speedtest ./cmd/speedtest
+VERSION="${VERSION:-$(git describe --tags --always 2>/dev/null || echo "dev")}" && \
+COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")" && \
+DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+LDFLAGS="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.date=${DATE}"
+CGO_ENABLED=1 GOOS=android GOARCH=arm64 go build -pgo=auto -a -ldflags "${LDFLAGS}" -o ./speedtest ./cmd/speedtest
 
 tar vcJf ./speedtest.tar.xz speedtest
 cp ./speedtest.tar.xz /work/artifact
