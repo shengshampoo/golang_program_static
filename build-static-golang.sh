@@ -7,10 +7,10 @@ WORKSPACE=/tmp/workspace
 mkdir -p $WORKSPACE
 mkdir -p /work/artifact
 
-# lux
+# rclone
 cd $WORKSPACE
-git clone https://github.com/iawia002/lux.git
-cd lux
+git clone https://github.com/rclone/rclone
+cd rclone
 if [ "$(uname -m)" == "x86_64" ]; then
 GOAMD64=v3 GOOS=$(uname -o | sed -e s@^.*/@@ | tr '[:upper:]' '[:lower:]') GOARCH=amd64 CGO_ENABLED=0 go build -pgo=auto -a -tags netgo -ldflags '-w -s -extldflags "-static"'
 elif [ "$(uname -m)" == "aarch64" ]; then
@@ -19,8 +19,8 @@ else
 exit 1
 fi
 
-tar vcJf ./lux.tar.xz lux
-cp ./lux.tar.xz /work/artifact
+tar vcJf ./rclone.tar.xz rclone
+cp ./rclone.tar.xz /work/artifact
 
 # graftcp
 cd $WORKSPACE
