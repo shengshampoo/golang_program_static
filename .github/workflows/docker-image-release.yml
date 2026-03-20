@@ -1,0 +1,45 @@
+name: Docker Image CI - X86_64/AARCH64 for Alpine/Alpaquita Linux with golang
+
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:
+      - 'continuous'
+  pull_request:
+    branches: [ "main" ]
+  # run it manually
+  workflow_dispatch:    
+  schedule:
+    - cron: "22 17 * * *"  
+    - cron: "51 3 * * *" 
+
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+        dockeros: [alpine, alpaquita]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build -f Dockerfile-${{ matrix.dockeros }} --tag buildergo .
+
+    - name: build static program with alpine/alpaquita linux docker with golang 
+      run: |
+        docker run --cidfile=buildergo.cid buildergo true
+        docker cp "$(cat buildergo.cid):work/artifact/." .
+
+    - name: Upload  binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./*.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        file_glob: true
+        body: "Fully static binary using alpine/alpaquita linux docker containers"  
