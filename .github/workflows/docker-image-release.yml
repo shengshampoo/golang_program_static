@@ -35,11 +35,20 @@ jobs:
         docker run --cidfile=buildergo.cid buildergo true
         docker cp "$(cat buildergo.cid):work/artifact/." .
 
-    - name: Upload binaries to release
+    - name: Upload rclone binary to release
       uses: svenstaro/upload-release-action@v2
       with:
-        file: ./*.tar.xz
+        file: ./rclone.tar.xz 
+        asset_name: rclone-${{ matrix.dockeros }}-${{ runner.os }}-${{ runner.arch }}.tar.xz
         tag: refs/tags/continuous
         overwrite: true
-        file_glob: true
-        body: "Fully static binary using alpine/alpaquita linux docker containers"  
+        body: "Fully static golang release binary." 
+
+    - name: Upload rclone binary to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./graftcp.tar.xz 
+        asset_name: graftcp-${{ matrix.dockeros }}-${{ runner.os }}-${{ runner.arch }}.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        body: "Fully static golang release binary."         
