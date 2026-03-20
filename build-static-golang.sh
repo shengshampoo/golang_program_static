@@ -3,6 +3,10 @@
 
 set -e
 
+GOLANG_BUILD_OS=$(lsb_release -is |  tr '[:upper:]' '[:lower:]')
+HOST_OS_RAW=$(uname -s)
+HOST_ARCH_RAW=$(uname -m)
+
 WORKSPACE=/tmp/workspace
 mkdir -p $WORKSPACE
 mkdir -p /work/artifact
@@ -19,8 +23,8 @@ else
 exit 1
 fi
 
-tar vcJf ./rclone.tar.xz rclone
-cp ./rclone.tar.xz /work/artifact
+tar vcJf ./rclone-${GOLANG_BUILD_OS}-${HOST_ARCH_RAW}.tar.xz rclone
+cp ./rclone-${GOLANG_BUILD_OS}-${HOST_ARCH_RAW}.tar.xz /work/artifact
 
 # graftcp
 cd $WORKSPACE
@@ -40,6 +44,6 @@ exit 1
 fi
 
 cd ../
-tar vcJf ./graftcp.tar.xz graftcp local/graftcp-local
-cp ./graftcp.tar.xz /work/artifact
+tar vcJf ./graftcp-${GOLANG_BUILD_OS}-${HOST_ARCH_RAW}.tar.xz graftcp local/graftcp-local
+cp ./graftcp-${GOLANG_BUILD_OS}-${HOST_ARCH_RAW}.tar.xz /work/artifact
 
