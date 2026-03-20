@@ -44,7 +44,7 @@ jobs:
         overwrite: true
         body: "Fully static golang release binary." 
 
-    - name: Upload rclone binary to release
+    - name: Upload graftcp binary to release
       uses: svenstaro/upload-release-action@v2
       with:
         file: ./graftcp.tar.xz 
