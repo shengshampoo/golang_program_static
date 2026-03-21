@@ -18,10 +18,10 @@ VERSION="${VERSION:-$(git describe --tags --always 2>/dev/null || echo "dev")}" 
 COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")" && \
 DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 LDFLAGS="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.date=${DATE}"
-CGO_ENABLED=1 GOOS=android GOARCH=arm64 go build -pgo=auto -a -ldflags "${LDFLAGS}" -o ./speedtest ./cmd/speedtest
+CGO_ENABLED=1 GOOS=android GOARCH=arm64 go build -pgo=auto -a -ldflags "${LDFLAGS}" -o ./inetspeed ./cmd/speedtest
 
-tar vcJf ./speedtest.tar.xz speedtest
-cp ./speedtest.tar.xz /work/artifact
+tar vcJf ./inetspeed.tar.xz inetspeed
+cp ./inetspeed.tar.xz /work/artifact
 
 # rclone
 cd $WORKSPACE
