@@ -1,0 +1,65 @@
+name: Docker Image CI - Termux Android AARCH64 for Alpaquita Linux with golang
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # run it manually
+  workflow_dispatch:    
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        dockeros: [alpaquita_termux]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build -f Dockerfile-${{ matrix.dockeros }} --tag buildergo .
+
+    - name: build static program with alpine/alpaquita linux docker with golang 
+      run: |
+        docker run --cidfile=buildergo.cid buildergo true
+        docker cp "$(cat buildergo.cid):work/artifact/." .
+
+    - name: Upload inetspeed binary to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./inetspeed.tar.xz 
+        asset_name: inetspeed-termux-Andoid-ARM64.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        body: "Fully static golang release binary."
+
+    - name: Upload rclone binary to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./rclone.tar.xz 
+        asset_name: rclone-termux-Andoid-ARM64.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        body: "Fully static golang release binary."
+
+    - name: Upload q binary to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./q.tar.xz 
+        asset_name: q-termux-Andoid-ARM64.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        body: "Fully static golang release binary."
+
+    - name: Upload doggo binary to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./doggo.tar.xz 
+        asset_name: doggo-termux-Andoid-ARM64.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        body: "Fully static golang release binary."
