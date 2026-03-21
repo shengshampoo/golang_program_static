@@ -1,4 +1,4 @@
-name: Docker Image CI - Termux Android AARCH64 for Alpaquita Linux with golang
+name: Docker Image CI - Termux Android AARCH64 for Alpaquita Linux with golang to continuous tags
 
 on:
   push:
