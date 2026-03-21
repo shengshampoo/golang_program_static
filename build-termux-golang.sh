@@ -23,6 +23,19 @@ CGO_ENABLED=1 GOOS=android GOARCH=arm64 go build -pgo=auto -a -ldflags "${LDFLAG
 tar vcJf ./inetspeed.tar.xz inetspeed
 cp ./inetspeed.tar.xz /work/artifact
 
+# NTrace-core
+cd $WORKSPACE
+git clone https://github.com/nxtrace/NTrace-core
+cd NTrace-core
+VERSION="${VERSION:-$(git describe --tags --always 2>/dev/null || echo "dev")}" && \
+COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")" && \
+DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+LDFLAGS="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.date=${DATE}"
+CGO_ENABLED=1 GOOS=android GOARCH=arm64 go build -trimpath -pgo=auto -a -ldflags "${LDFLAGS}" -o ./nexttrace .
+
+tar vcJf ./nexttrace.tar.xz nexttrace
+cp ./nexttrace.tar.xz /work/artifact
+
 # rclone
 cd $WORKSPACE
 git clone https://github.com/rclone/rclone
