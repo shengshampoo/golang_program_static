@@ -1,4 +1,4 @@
-name: Docker Image CI - X86_64/AARCH64 for Alpine/Alpaquita Linux with golang
+name: Docker Image CI - X86_64/AARCH64 for Alpine/Alpaquita Linux with golang to continuous tags
 
 
 on:
