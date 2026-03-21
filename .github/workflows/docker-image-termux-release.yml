@@ -41,6 +41,15 @@ jobs:
         overwrite: true
         body: "Fully static golang release binary."
 
+    - name: Upload nexttrace binary to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./nexttrace.tar.xz 
+        asset_name: inetspeed-termux-Andoid-ARM64.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        body: "Fully static golang release binary."
+
     - name: Upload rclone binary to release
       uses: svenstaro/upload-release-action@v2
       with:
