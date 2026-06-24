@@ -31,7 +31,7 @@ sed -i '22i#define uint unsigned int' ./cidr-trie.c
 sed -i '23i#define u_char unsigned char' ./cidr-trie.c 
 CFLAGS="$CFLAGS -static" LDFLAGS="-static --static -no-pie -s" make
 
-cd ../
-tar vcJf ./graftcp.tar.xz graftcp local/graftcp
+cd local
+tar vcJf ./graftcp.tar.xz graftcp
 cp ./graftcp.tar.xz /work/artifact
 
