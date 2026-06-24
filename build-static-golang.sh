@@ -29,6 +29,8 @@ cd graftcp
 sed -i '/$(CROSS_COMPILE)/s/^/#&/' ./Makefile
 sed -i '22i#define uint unsigned int' ./cidr-trie.c
 sed -i '23i#define u_char unsigned char' ./cidr-trie.c 
+sed -i '/^GO_LDFLAGS ?=/s/$/ -extldflags "-static"/' ./Makefile
+sed -i '/^CFLAGS +=/s/$/ -static/' ./Makefile
 CFLAGS="$CFLAGS -static" LDFLAGS="-static --static -no-pie -s" make
 
 cd local
