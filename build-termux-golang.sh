@@ -73,6 +73,7 @@ cp ./q.tar.xz /work/artifact
 cd $WORKSPACE
 git clone https://github.com/mr-karan/doggo
 cd doggo
+sed -i 's/go 1.26.4/go 1.26.3/' go.mod
 HASH="$(git rev-parse --short HEAD)"
 BUILD_DATE="$(date '+%Y-%m-%d %H:%M:%S')"
 VERSION=$HASH
