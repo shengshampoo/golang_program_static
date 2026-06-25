@@ -41,6 +41,7 @@ cp ./inetspeed.tar.xz /work/artifact
 cd $WORKSPACE
 git clone https://github.com/nxtrace/NTrace-core
 cd NTrace-core
+sed -i 's/go 1.26.4/go 1.26.3/' go.mod
 VERSION="${VERSION:-$(git describe --tags --always 2>/dev/null || echo "dev")}" && \
 COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")" && \
 DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
