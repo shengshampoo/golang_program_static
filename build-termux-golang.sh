@@ -91,7 +91,7 @@ cd ./server/ui
 npm install . --force
 yarn build && cd ../
 export LD_FLAGS="-w -s -X main.Version=$(git describe --tags | cut -c 2-) -X main.BuildDate=$(date "+%F-%T") -X main.Commit=$(git rev-parse --verify HEAD) -X main.Mode=prod"
-CGO_ENABLED=1 GOOS=android GOARCH=arm64 go build -pgo=auto -a -tags netgo -ldflags="$LD_FLAGS -w -s -extldflags '-static'" -o gotify-server
+CGO_ENABLED=1 GOOS=android GOARCH=arm64 go build -pgo=auto -a -tags netgo -ldflags="$LD_FLAGS -w -s" -o gotify-server
 
 tar vcJf ./gotify-server.tar.xz gotify-server
 cp ./gotify-server.tar.xz /work/artifact
