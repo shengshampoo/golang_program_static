@@ -76,3 +76,12 @@ jobs:
         tag: refs/tags/continuous
         overwrite: true
         body: "Fully static golang release binary."
+
+    - name: Upload gotify-server binary to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: ./gotify-server.tar.xz 
+        asset_name: gotify-server-termux-Andoid-ARM64.tar.xz
+        tag: refs/tags/continuous
+        overwrite: true
+        body: "Fully static golang release binary." 
