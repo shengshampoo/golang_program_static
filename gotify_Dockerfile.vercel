@@ -1,0 +1,42 @@
+# --- Stage 1: Build the Gotify Server and UI ---
+FROM bellsoft/alpaquita-linux-go:1.26-musl AS builder
+
+# Install build dependencies
+RUN apk add --no-cache \
+  curl git gcc make linux-headers \
+  musl-dev bash patch pkgconfig xz \
+  sqlite-static sqlite-dev yarn nodejs npm
+
+# Clone the official Gotify Server source code
+WORKDIR /src
+RUN npm install -g typescript && git clone https://github.com/gotify/server
+
+# Build the Web UI frontend
+RUN cd ./server/ui && npm install . --force && yarn build && cd ../ && \
+  curl -LO https://raw.githubusercontent.com/shengshampoo/golang_program_static/refs/heads/main/gotify-server.env
+
+# Compile the Go application with CGO enabled for SQLite support
+ARG LD_FLAGS="-w -s -X main.Version=$(git describe --tags | cut -c 2-) -X main.BuildDate=$(date "+%F-%T") -X main.Commit=$(git rev-parse --verify HEAD) -X main.Mode=prod"
+RUN CGO_ENABLED=1 go build -pgo=auto -a -tags netgo -ldflags="$LD_FLAGS -w -s -extldflags '-static'" -o gotify-server
+
+# --- Stage 2: Final Lightweight Runtime Image ---
+FROM bellsoft/alpaquita-linux-base:stream-musl
+
+WORKDIR /gotify
+
+# Copy the compiled binary from the builder stage
+COPY --from=builder /src/server/gotify-server .
+COPY --from=builder /src/server/gotify-server.env .
+
+# Create directory for persistent data
+RUN mkdir -p /gotify/data /gotify/plugins && chmod +x gotify-server
+ENV GOTIFY_CONFIG_FILE=/gotify/gotify-server.env
+
+# Expose default HTTP port
+EXPOSE 80
+
+# Mount persistent storage volume
+VOLUME ["/gotify/data", "/gotify/plugins"]
+
+# Run the server
+ENTRYPOINT ["./gotify-server serve"]
