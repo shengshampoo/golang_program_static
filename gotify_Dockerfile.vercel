@@ -1,0 +1,46 @@
+# --- Stage 1: Build the Gotify Server and UI ---
+FROM bellsoft/alpaquita-linux-go:1.26-musl AS builder
+
+# 1. 安裝建置依賴
+RUN apk add --no-cache \
+  curl git gcc make linux-headers \
+  musl-dev bash patch pkgconfig xz \
+  sqlite-static sqlite-dev yarn nodejs npm
+
+# 2. 全域安裝 TypeScript 並複製原始碼
+WORKDIR /src
+RUN npm install -g typescript && git clone https://github.com/gotify/server
+
+# 3. 切換到專案根目錄 (確保 Git 與 Go 指令路徑正確)
+WORKDIR /src/server
+
+# 4. 建置 Web UI 前端與下載環境變數檔
+RUN cd ui && npm install . --force && yarn build && cd .. && \
+  curl -LO https://raw.githubusercontent.com/shengshampoo/golang_program_static/refs/heads/main/gotify-server.env
+
+# 5. 編譯 Go 應用程式 (開啟 CGO 支援 SQLite)
+# 修正說明：移除或關閉 -pgo 以防官方原始碼中缺少 default.pgo 導致編譯警告
+RUN LD_FLAGS="-w -s -X main.Version=$(git describe --tags --always | sed 's/^v//') -X main.BuildDate=$(date "+%F-%T") -X main.Commit=$(git rev-parse --verify HEAD) -X main.Mode=prod" && \
+  CGO_ENABLED=1 go build -pgo=off -a -tags netgo -ldflags="$LD_FLAGS -extldflags '-static'" -o gotify-server
+
+# --- Stage 2: Final Lightweight Runtime Image ---
+FROM bellsoft/alpaquita-linux-base:stream-musl
+
+WORKDIR /gotify
+
+# 6. 從 builder 階段複製編譯好的執行檔與環境變數
+COPY --from=builder /src/server/gotify-server .
+COPY --from=builder /src/server/gotify-server.env .
+
+# 7. 建立持久化目錄並賦予執行權限
+RUN mkdir -p /gotify/data /gotify/plugins && chmod +x gotify-server
+
+# 8. 設定環境變數與 Port
+ENV GOTIFY_CONFIG_FILE=/gotify/gotify-server.env
+EXPOSE 80
+
+# 9. 掛載持久化儲存空間
+VOLUME ["/gotify/data", "/gotify/plugins"]
+
+# 10. 最終修正：使用「絕對路徑」傳遞引數，避免部分 CI/CD 平台解析相對路徑失敗
+ENTRYPOINT ["/gotify/gotify-server", "serve"]
